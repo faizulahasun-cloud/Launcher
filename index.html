@@ -24,6 +24,7 @@ main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionh
   <button class="tab" role="tab" data-tab="hermes" aria-selected="false">Hermes<small>Implement</small></button>
   <button class="tab" role="tab" data-tab="workflow" aria-selected="false">Workflow<small>Handoffs</small></button>
   <button class="tab" role="tab" data-tab="settings" aria-selected="false">Settings<small>Connections</small></button>
+  <button class="tab" role="tab" data-tab="clipboard" aria-selected="false">Clipboard<small>Quick transfer</small></button>
  </nav>
 </header>
 <main>
@@ -51,6 +52,24 @@ main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionh
   <div class="settingsrow"><div><strong>Local message history</strong><p>Saved in this browser’s local storage. Do not paste secrets.</p></div><button class="linkbtn" id="exportData">Export JSON</button></div>
  </div>
  <div class="notice">GitHub Pages serves static files and cannot run the backend needed for secure API keys or local laptop execution. Never put provider API keys or Telegram bot tokens in this page.</div>
+</section>
+<section class="view" id="clipboardView">
+ <div class="sectionhead"><h2>Clipboard bridge</h2><span class="pill">Telegram Mini App</span></div>
+ <div class="notice"><strong>One-tap transfer:</strong> paste or load text here, then choose a destination. This page can copy text and open the destination; iOS/Telegram will not allow silent pasting into another app.</div>
+ <div class="workflowcard">
+  <label for="clipboardText" style="display:block;font-size:12px;color:var(--muted);margin-bottom:8px">Message to transfer</label>
+  <textarea id="clipboardText" placeholder="Paste a Telegram message here…" style="width:100%;min-height:180px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:#111318;color:var(--text);padding:12px"></textarea>
+  <div class="smallrow" style="margin-top:10px">
+   <button class="action" id="readClipboard">Paste from clipboard</button>
+   <button class="action" id="copyClipboard">Copy message</button>
+   <button class="action" id="sendBotData">Send to bot</button>
+  </div>
+  <div class="smallrow" style="margin-top:12px">
+   <button class="send" id="copyOpenChatGPT">Copy + Open ChatGPT</button>
+   <button class="send" id="copyOpenClaude">Copy + Open Claude</button>
+  </div>
+  <p class="quiet" style="margin:12px 0 0">“Send to bot” uses Telegram Mini App sendData when this page was opened through a supported bot keyboard button. It does not send text to ChatGPT or Claude automatically.</p>
+ </div>
 </section>
 </main>
 <div class="composer" id="composer">
@@ -80,7 +99,8 @@ main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionh
   $("conversationView").classList.toggle("active",["chatgpt","claude","hermes"].includes(tab));
   $("workflowView").classList.toggle("active",tab==="workflow");
   $("settingsView").classList.toggle("active",tab==="settings");
-  $("composer").style.display=tab==="workflow"||tab==="settings"?"none":"block";
+  $("clipboardView").classList.toggle("active",tab==="clipboard");
+  $("composer").style.display=tab==="workflow"||tab==="settings"||tab==="clipboard"?"none":"block";
   $("conversationTitle").textContent=names[tab]?names[tab]+" workspace":"";
   $("composerTitle").textContent="New note for "+(names[tab]||"workspace");
   $("draft").placeholder=tab==="hermes"?"Paste Claude’s plan or write the task for Hermes…":tab==="claude"?"Paste a ChatGPT reply or write the planning request…":"Paste a reply from your Chrome ChatGPT conversation, or write a note…";
@@ -115,6 +135,17 @@ main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionh
   el.innerHTML=state.queue.map(q=>'<div class="workflowcard"><div class="sectionhead"><strong>'+esc(names[q.source]||q.source)+' → '+esc(names[q.target]||q.target)+'</strong><span class="pill">'+esc(q.status)+'</span></div><div class="quiet">'+esc(new Date(q.time).toLocaleString())+'</div><div class="actions"><button class="action" data-queue="copy" data-id="'+q.id+'">Copy packet</button><button class="action" data-queue="share" data-id="'+q.id+'">Share packet</button><button class="action" data-queue="open" data-id="'+q.id+'">Open '+esc(names[q.target])+'</button></div></div>').join("");
  }
  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+ const clipboardText=$("clipboardText");
+ let clipboardReadPending=false;
+ if(tg&&typeof tg.onEvent==="function"){tg.onEvent("clipboardTextReceived",event=>{clipboardReadPending=false;if(event&&typeof event.data==="string"&&event.data.trim()){clipboardText.value=event.data;toast("Clipboard text loaded.");}else{toast("Telegram did not grant clipboard access. Paste manually.");}});}
+ async function readClipboard(){try{if(tg&&typeof tg.readTextFromClipboard==="function"){clipboardReadPending=true;tg.readTextFromClipboard();return;}if(!navigator.clipboard||!navigator.clipboard.readText)throw new Error("Clipboard read unavailable");const text=await navigator.clipboard.readText();if(!text.trim()){toast("Clipboard is empty.");return;}clipboardText.value=text;toast("Clipboard text loaded.");}catch(e){clipboardReadPending=false;toast("Clipboard access blocked. Paste into the box manually.");}}
+ async function copyClipboard(){const text=clipboardText.value.trim();if(!text){toast("Paste a message first.");return false;}try{await navigator.clipboard.writeText(text);toast("Message copied.");return true;}catch(e){const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();if(!ok)toast("Copy blocked. Select and copy manually.");else toast("Message copied.");return !!ok;}}
+ $("readClipboard").addEventListener("click",readClipboard);
+ $("copyClipboard").addEventListener("click",copyClipboard);
+ function copyAndOpen(url){if(!clipboardText.value.trim()){toast("Paste a message first.");return;}copyClipboard();openExternal(url);}
+ $("copyOpenChatGPT").addEventListener("click",()=>copyAndOpen(urls.chatgpt));
+ $("copyOpenClaude").addEventListener("click",()=>copyAndOpen(urls.claude));
+ $("sendBotData").addEventListener("click",()=>{const text=clipboardText.value.trim();if(!text){toast("Paste a message first.");return;}if(tg&&typeof tg.sendData==="function"){tg.sendData(JSON.stringify({type:"clipboard_handoff",text:text,created_at:new Date().toISOString()}));toast("Submitted to the bot.");}else{toast("Open this Mini App from a Telegram bot keyboard button to send data to the bot.");}});
  $("addMessage").addEventListener("click",()=>{if(addMessage($("draft").value,active,"You"))$("draft").value="";});
  $("draft").addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter")$("addMessage").click();});
  $("shareDraft").addEventListener("click",()=>{const t=$("draft").value.trim();if(!t){toast("Write a draft first.");return;}shareText(t);});
