@@ -136,12 +136,15 @@ main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionh
  }
  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
  const clipboardText=$("clipboardText");
- async function readClipboard(){try{if(!navigator.clipboard||!navigator.clipboard.readText)throw new Error("Clipboard read unavailable");const text=await navigator.clipboard.readText();if(!text.trim()){toast("Clipboard is empty.");return;}clipboardText.value=text;toast("Clipboard text loaded.");}catch(e){toast("Clipboard access blocked. Paste into the box manually.");}}
+ let clipboardReadPending=false;
+ if(tg&&typeof tg.onEvent==="function"){tg.onEvent("clipboardTextReceived",event=>{clipboardReadPending=false;if(event&&typeof event.data==="string"&&event.data.trim()){clipboardText.value=event.data;toast("Clipboard text loaded.");}else{toast("Telegram did not grant clipboard access. Paste manually.");}});}
+ async function readClipboard(){try{if(tg&&typeof tg.readTextFromClipboard==="function"){clipboardReadPending=true;tg.readTextFromClipboard();return;}if(!navigator.clipboard||!navigator.clipboard.readText)throw new Error("Clipboard read unavailable");const text=await navigator.clipboard.readText();if(!text.trim()){toast("Clipboard is empty.");return;}clipboardText.value=text;toast("Clipboard text loaded.");}catch(e){clipboardReadPending=false;toast("Clipboard access blocked. Paste into the box manually.");}}
  async function copyClipboard(){const text=clipboardText.value.trim();if(!text){toast("Paste a message first.");return false;}try{await navigator.clipboard.writeText(text);toast("Message copied.");return true;}catch(e){const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();if(!ok)toast("Copy blocked. Select and copy manually.");else toast("Message copied.");return !!ok;}}
  $("readClipboard").addEventListener("click",readClipboard);
  $("copyClipboard").addEventListener("click",copyClipboard);
- $("copyOpenChatGPT").addEventListener("click",async()=>{const ok=await copyClipboard();if(ok)openExternal(urls.chatgpt);});
- $("copyOpenClaude").addEventListener("click",async()=>{const ok=await copyClipboard();if(ok)openExternal(urls.claude);});
+ function copyAndOpen(url){if(!clipboardText.value.trim()){toast("Paste a message first.");return;}copyClipboard();openExternal(url);}
+ $("copyOpenChatGPT").addEventListener("click",()=>copyAndOpen(urls.chatgpt));
+ $("copyOpenClaude").addEventListener("click",()=>copyAndOpen(urls.claude));
  $("sendBotData").addEventListener("click",()=>{const text=clipboardText.value.trim();if(!text){toast("Paste a message first.");return;}if(tg&&typeof tg.sendData==="function"){tg.sendData(JSON.stringify({type:"clipboard_handoff",text:text,created_at:new Date().toISOString()}));toast("Submitted to the bot.");}else{toast("Open this Mini App from a Telegram bot keyboard button to send data to the bot.");}});
  $("addMessage").addEventListener("click",()=>{if(addMessage($("draft").value,active,"You"))$("draft").value="";});
  $("draft").addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter")$("addMessage").click();});
