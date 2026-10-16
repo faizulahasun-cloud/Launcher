@@ -1,165 +1,190 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111318">
-<title>AI Handoff Desk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Launcher</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#111318;--panel:#191c23;--panel2:#20242d;--line:#2d323d;--text:#f3f5f8;--muted:#9da6b5;--green:#77e0b5;--blue:#8db9ff;--orange:#f0b98b;--danger:#ff9b9b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:0 0 env(safe-area-inset-bottom)}button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-.app{max-width:960px;min-height:100vh;margin:auto;display:flex;flex-direction:column}.top{padding:17px 16px 12px;border-bottom:1px solid var(--line);background:#14161c;position:sticky;top:0;z-index:3}.brandrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:18px;font-weight:750;letter-spacing:-.4px}.sub{color:var(--muted);font-size:12px;margin-top:3px}.status{font-size:11px;border:1px solid #385648;color:var(--green);border-radius:99px;padding:5px 8px;white-space:nowrap}.tabs{display:flex;gap:7px;margin-top:15px;overflow-x:auto;padding-bottom:2px}.tab{flex:1;min-width:94px;border:1px solid var(--line);border-radius:12px;background:transparent;padding:10px 12px;text-align:center;color:var(--muted);font-weight:650}.tab[aria-selected=true]{background:#2a303b;color:var(--text);border-color:#485366}.tab small{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-top:2px}.tab[aria-selected=true] small{color:#c6d0df}
-main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.sectionhead h2{font-size:16px;margin:0}.quiet{color:var(--muted);font-size:12px}.pill{font-size:11px;border-radius:99px;padding:4px 8px;background:#252a34;color:#c2cad7;white-space:nowrap}.notice{background:#25231e;border:1px solid #4a4031;color:#e6d0b5;border-radius:12px;padding:11px 12px;font-size:12px;margin:0 0 14px}.notice strong{color:#ffe2bd}.messages{display:flex;flex-direction:column;gap:12px;padding-bottom:12px}.empty{border:1px dashed #3a414e;border-radius:16px;padding:26px 18px;text-align:center;color:var(--muted);margin:14px 0}.empty strong{display:block;color:var(--text);font-size:15px;margin-bottom:6px}.msg{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:13px 13px 10px;min-width:0}.msg.user{background:#202934;border-color:#334354}.msghead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}.who{font-size:12px;font-weight:750}.who.userlabel{color:var(--blue)}.time{font-size:10px;color:var(--muted)}.msgbody{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;padding-top:9px;border-top:1px solid var(--line)}.action{font-size:11px;border:1px solid #3a414d;background:#20242c;border-radius:8px;padding:6px 9px;color:#d5dbe5}.action.primary{border-color:#3b705a;color:var(--green)}.action:active,.tab:active,.send:active{transform:translateY(1px)}.composer{position:sticky;bottom:0;background:#14161c;border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:2}.composerlabel{font-size:11px;color:var(--muted);margin-bottom:7px;display:flex;justify-content:space-between}.composebox{border:1px solid #343a46;border-radius:15px;background:#1b1e25;padding:10px}.composebox textarea{width:100%;resize:vertical;min-height:74px;max-height:220px;border:0;outline:none;background:transparent;color:var(--text);font:inherit;display:block}.composebox textarea:focus-visible{outline:none}.composerfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}.send{background:#dce7f6;color:#17202b;border:0;border-radius:10px;padding:9px 15px;font-size:12px;font-weight:750}.secondary{background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:12px;color:#c4cbd6}.smallrow{display:flex;gap:7px;flex-wrap:wrap}.workflowcard{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:12px}.step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.step:last-child{border-bottom:0}.stepnum{width:25px;height:25px;display:grid;place-items:center;background:#2a303b;border-radius:8px;font-size:12px;font-weight:750;flex-shrink:0}.step h3{font-size:13px;margin:0 0 3px}.step p{font-size:12px;color:var(--muted);margin:0}.state{font-size:10px;color:var(--orange);margin-left:auto}.settingsrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.settingsrow:last-child{border-bottom:0}.settingsrow strong{font-size:13px}.settingsrow p{font-size:11px;color:var(--muted);margin:3px 0 0}.linkbtn{border:1px solid var(--line);background:#222630;padding:7px 9px;border-radius:9px;font-size:11px;white-space:nowrap}.toast{position:fixed;left:50%;bottom:calc(105px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#e6edf6;color:#151920;border-radius:10px;padding:10px 14px;font-size:12px;box-shadow:0 8px 35px #0008;z-index:9;max-width:90%;text-align:center;display:none}.toast.show{display:block}.footerhint{text-align:center;color:#707989;font-size:10px;padding:7px 16px 14px}
-@media(min-width:700px){main{padding:24px}.top{padding:20px 24px 14px}.composer{padding-left:24px;padding-right:24px}.msg{padding:16px}.msgbody{font-size:15px}}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px)); background: #17212b; color: #f5f7fa; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+h1 { margin: 0 4px 20px; font-size: 24px; font-weight: 650; }
+h2 { margin: 28px 4px 8px; font-size: 18px; font-weight: 650; }
+.tile { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 96px; margin: 0 0 14px; padding: 20px 18px; background: #243445; color: inherit; border: 0; border-radius: 18px; text-align: left; font: inherit; cursor: pointer; }
+.tile:active, .btn:active { opacity: .75; }
+.tile:focus-visible, .btn:focus-visible, textarea:focus-visible, input:focus-visible { outline: 3px solid #6ab3f3; outline-offset: 2px; }
+.name { display: block; font-size: 21px; font-weight: 650; }
+.note { display: block; margin-top: 2px; font-size: 15px; color: #9fb0c0; }
+.hint { margin: 0 4px 12px; font-size: 14px; line-height: 1.5; color: #9fb0c0; }
+textarea, input { width: 100%; background: #0e1621; color: inherit; border: 1px solid #2f4256; border-radius: 14px; padding: 14px; font: inherit; font-size: 16px; }
+textarea { min-height: 150px; resize: vertical; }
+input { margin-top: 10px; }
+.row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.btn { flex: 1 1 140px; min-height: 48px; padding: 0 14px; border: 0; border-radius: 14px; background: #243445; color: inherit; font: inherit; font-weight: 600; cursor: pointer; }
+.btn.claude { background: #c4703f; }
+.btn.gpt { background: #10a37f; }
+.btn.hermes { background: #6a5fd8; }
+#status { min-height: 22px; margin: 12px 4px 0; font-size: 14px; color: #8fd3a8; }
+#log { margin: 10px 4px 0; padding: 0; list-style: none; font-size: 13px; color: #9fb0c0; }
+#log li { padding: 6px 0; border-top: 1px solid #243445; }
 </style>
 </head>
 <body>
-<div class="app">
-<header class="top">
- <div class="brandrow"><div><div class="brand">AI Handoff Desk</div><div class="sub">One conversation. Three workspaces. Explicit handoffs.</div></div><span class="status" id="connectionStatus">Local draft mode</span></div>
- <nav class="tabs" role="tablist" aria-label="Workspace">
-  <button class="tab" role="tab" data-tab="chatgpt" aria-selected="true">ChatGPT<small>Discuss</small></button>
-  <button class="tab" role="tab" data-tab="claude" aria-selected="false">Claude<small>Plan</small></button>
-  <button class="tab" role="tab" data-tab="hermes" aria-selected="false">Hermes<small>Implement</small></button>
-  <button class="tab" role="tab" data-tab="workflow" aria-selected="false">Workflow<small>Handoffs</small></button>
-  <button class="tab" role="tab" data-tab="settings" aria-selected="false">Settings<small>Connections</small></button>
-  <button class="tab" role="tab" data-tab="clipboard" aria-selected="false">Clipboard<small>Quick transfer</small></button>
- </nav>
-</header>
-<main>
-<section class="view active" id="conversationView">
- <div class="sectionhead"><h2 id="conversationTitle">ChatGPT workspace</h2><span class="pill" id="messageCount">0 messages</span></div>
- <div class="notice"><strong>Connection status:</strong> this is a message workspace, not a logged-in ChatGPT/Claude client. Add or paste replies here. Messages stay in this browser until you hand them off.</div>
- <div class="messages" id="messages" aria-live="polite"></div>
-</section>
-<section class="view" id="workflowView">
- <div class="sectionhead"><h2>Handoff pipeline</h2><button class="secondary" id="clearWorkflow">Clear queue</button></div>
- <div class="notice"><strong>Human-controlled:</strong> each transfer is prepared explicitly. No task is sent to Hermes for execution by this page.</div>
- <div id="workflowList"></div>
- <div class="workflowcard">
-  <div class="step"><span class="stepnum">1</span><div><h3>ChatGPT conversation</h3><p>Copy a reply from your existing Chrome chat and paste it into ChatGPT here, or draft a note.</p></div><span class="state">Manual</span></div>
-  <div class="step"><span class="stepnum">2</span><div><h3>Claude: infrastructure plan</h3><p>Use “Send to Claude” to prepare a handoff packet, copy it, then paste it into Claude.</p></div><span class="state">Manual</span></div>
-  <div class="step"><span class="stepnum">3</span><div><h3>Hermes: implementation</h3><p>Review Claude’s response, prepare a Hermes task packet, and deliver it through your configured Hermes channel.</p></div><span class="state">Bridge needed</span></div>
- </div>
-</section>
-<section class="view" id="settingsView">
- <div class="sectionhead"><h2>Connections & privacy</h2></div>
- <div class="workflowcard">
-  <div class="settingsrow"><div><strong>ChatGPT website</strong><p>Open the official ChatGPT webpage to sign in, create an account, or use an existing browser session. Login is handled by OpenAI, not stored in this app.</p></div><div class="smallrow"><button class="linkbtn" data-open="https://chatgpt.com/">Log in</button><button class="linkbtn" data-open="https://chatgpt.com/">Sign up / Open</button></div></div>
-  <div class="settingsrow"><div><strong>ChatGPT (browser session)</strong><p>This app cannot read your ChatGPT webpage session or access its conversations automatically.</p></div><span class="pill">Not connected</span></div>
-  <div class="settingsrow"><div><strong>Claude</strong><p>Handoff opens Claude; you paste the prepared message.</p></div><button class="linkbtn" data-open="https://claude.ai/new">Open Claude</button></div>
-  <div class="settingsrow"><div><strong>Hermes Agent</strong><p>Requires a reachable, authenticated Hermes bridge or Telegram bot integration.</p></div><span class="pill">Not connected</span></div>
-  <div class="settingsrow"><div><strong>Local message history</strong><p>Saved in this browser’s local storage. Do not paste secrets.</p></div><button class="linkbtn" id="exportData">Export JSON</button></div>
- </div>
- <div class="notice">GitHub Pages serves static files and cannot run the backend needed for secure API keys or local laptop execution. Never put provider API keys or Telegram bot tokens in this page.</div>
-</section>
-<section class="view" id="clipboardView">
- <div class="sectionhead"><h2>Clipboard bridge</h2><span class="pill">Telegram Mini App</span></div>
- <div class="notice"><strong>One-tap transfer:</strong> paste or load text here, then choose a destination. This page can copy text and open the destination; iOS/Telegram will not allow silent pasting into another app.</div>
- <div class="workflowcard">
-  <label for="clipboardText" style="display:block;font-size:12px;color:var(--muted);margin-bottom:8px">Message to transfer</label>
-  <textarea id="clipboardText" placeholder="Paste a Telegram message here…" style="width:100%;min-height:180px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:#111318;color:var(--text);padding:12px"></textarea>
-  <div class="smallrow" style="margin-top:10px">
-   <button class="action" id="readClipboard">Paste from clipboard</button>
-   <button class="action" id="copyClipboard">Copy message</button>
-   <button class="action" id="sendBotData">Send to bot</button>
-  </div>
-  <div class="smallrow" style="margin-top:12px">
-   <button class="send" id="copyOpenChatGPT">Copy + Open ChatGPT</button>
-   <button class="send" id="copyOpenClaude">Copy + Open Claude</button>
-  </div>
-  <p class="quiet" style="margin:12px 0 0">“Send to bot” uses Telegram Mini App sendData when this page was opened through a supported bot keyboard button. It does not send text to ChatGPT or Claude automatically.</p>
- </div>
-</section>
-</main>
-<div class="composer" id="composer">
- <div class="composerlabel"><span id="composerTitle">New note for ChatGPT workspace</span><span>Saved locally</span></div>
- <div class="composebox"><textarea id="draft" placeholder="Paste a ChatGPT reply, write a note, or add Claude’s response…"></textarea><div class="composerfoot"><div class="smallrow"><button class="secondary" id="shareDraft">Share draft</button><button class="secondary" id="prepareHandoff">Send to…</button></div><button class="send" id="addMessage">Add message ↑</button></div></div>
+<h1>My Launcher</h1>
+
+<button class="tile" type="button" data-url="https://claude.ai/new">
+<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect width="52" height="52" rx="14" fill="#c4703f"/><g stroke="#fff" stroke-width="3.5" stroke-linecap="round"><line x1="26" y1="12" x2="26" y2="40"/><line x1="12" y1="26" x2="40" y2="26"/><line x1="16" y1="16" x2="36" y2="36"/><line x1="36" y1="16" x2="16" y2="36"/></g></svg>
+<span><span class="name">Claude</span><span class="note">Start a new chat</span></span>
+</button>
+
+<button class="tile" type="button" data-url="https://chatgpt.com/">
+<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect width="52" height="52" rx="14" fill="#10a37f"/><polygon points="26,11 39,18.5 39,33.5 26,41 13,33.5 13,18.5" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/><circle cx="26" cy="26" r="4" fill="#fff"/></svg>
+<span><span class="name">ChatGPT</span><span class="note">Open ChatGPT</span></span>
+</button>
+
+<button class="tile" type="button" id="hermesTile">
+<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect width="52" height="52" rx="14" fill="#6a5fd8"/><text x="26" y="35" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="700" fill="#fff">H</text></svg>
+<span><span class="name">Hermes</span><span class="note">Open your Hermes bot</span></span>
+</button>
+
+<h2>Handoff: ChatGPT → Claude → Hermes</h2>
+<p class="hint">Paste a reply here, then send it on. Nothing leaves your device except through the button you tap. Do not paste keys or tokens.</p>
+<label for="msg" class="hint">Message</label>
+<textarea id="msg" placeholder="Paste the reply you want to pass on"></textarea>
+<div class="row">
+<button class="btn" type="button" id="paste">Paste from clipboard</button>
+<button class="btn" type="button" id="clear">Clear</button>
 </div>
-<div class="footerhint">Handoffs are explicit. External AI sessions and Hermes execution are not connected yet.</div>
+<div class="row">
+<button class="btn claude" type="button" id="toClaude">Copy + open Claude</button>
+<button class="btn gpt" type="button" id="toGpt">Copy + open ChatGPT</button>
 </div>
-<div class="toast" id="toast" role="status"></div>
+<div class="row">
+<button class="btn hermes" type="button" id="toHermes">Send to Hermes (Telegram)</button>
+</div>
+<label for="hermesUser" class="hint" style="display:block;margin-top:14px">Hermes bot username (optional, saved on this device)</label>
+<input id="hermesUser" type="text" placeholder="@YourHermesBot" autocapitalize="none" autocomplete="off">
+<div class="row"><button class="btn" type="button" id="openHermes">Open Hermes chat</button></div>
+<div id="status" role="status" aria-live="polite"></div>
+<ul id="log"></ul>
+
 <script>
-(function(){
- const tg=window.Telegram&&window.Telegram.WebApp;
- if(tg){tg.ready();tg.expand();try{tg.setHeaderColor("#14161c");tg.setBackgroundColor("#111318");}catch(e){}}
- const KEY="ai-handoff-desk-v1";
- const names={chatgpt:"ChatGPT",claude:"Claude",hermes:"Hermes"};
- const urls={chatgpt:"https://chatgpt.com/",claude:"https://claude.ai/new",hermes:""};
- let state={messages:[],queue:[]};let active="chatgpt";
- try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&Array.isArray(saved.messages)&&Array.isArray(saved.queue))state=saved;}catch(e){}
- const $=id=>document.getElementById(id);
- function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){toast("Could not save locally. Browser storage may be full.");}}
- function toast(s){const el=$("toast");el.textContent=s;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2600);}
- function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
- function currentMessages(){return state.messages.filter(m=>m.workspace===active);}
- function setTab(tab){
-  active=tab;
-  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===tab)));
-  $("conversationView").classList.toggle("active",["chatgpt","claude","hermes"].includes(tab));
-  $("workflowView").classList.toggle("active",tab==="workflow");
-  $("settingsView").classList.toggle("active",tab==="settings");
-  $("clipboardView").classList.toggle("active",tab==="clipboard");
-  $("composer").style.display=tab==="workflow"||tab==="settings"||tab==="clipboard"?"none":"block";
-  $("conversationTitle").textContent=names[tab]?names[tab]+" workspace":"";
-  $("composerTitle").textContent="New note for "+(names[tab]||"workspace");
-  $("draft").placeholder=tab==="hermes"?"Paste Claude’s plan or write the task for Hermes…":tab==="claude"?"Paste a ChatGPT reply or write the planning request…":"Paste a reply from your Chrome ChatGPT conversation, or write a note…";
-  render();
- }
- function render(){
-  const list=$("messages");if(!["chatgpt","claude","hermes"].includes(active)){return;}
-  const arr=currentMessages();$("messageCount").textContent=arr.length+" message"+(arr.length===1?"":"s");
-  if(!arr.length){list.innerHTML='<div class="empty"><strong>Your conversation workspace is empty</strong>Paste a reply from the matching AI app, or add a note below. Each message gets its own copy, share, and handoff actions.</div>';return;}
-  list.innerHTML=arr.map(m=>'<article class="msg '+(m.role==="You"?"user":"")+'"><div class="msghead"><span class="who '+(m.role==="You"?"userlabel":"")+'">'+esc(m.role)+'</span><span class="time">'+esc(new Date(m.time).toLocaleString())+'</span></div><div class="msgbody">'+esc(m.text)+'</div><div class="actions"><button class="action" data-action="copy" data-id="'+m.id+'">Copy</button><button class="action" data-action="share" data-id="'+m.id+'">Share</button><button class="action primary" data-action="handoff" data-id="'+m.id+'" data-target="claude">Send to Claude</button><button class="action primary" data-action="handoff" data-id="'+m.id+'" data-target="hermes">Send to Hermes</button></div></article>').join("");
-  list.scrollTop=list.scrollHeight;
- }
- function addMessage(text,workspace,role){
-  const clean=String(text||"").trim();if(!clean){toast("Write or paste a message first.");return null;}
-  const m={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),workspace:workspace||active,role:role||"You",text:clean,time:new Date().toISOString()};
-  state.messages.push(m);persist();if(active===m.workspace)render();return m;
- }
- async function copyText(text){try{await navigator.clipboard.writeText(text);toast("Copied to clipboard.");}catch(e){const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();toast(ok?"Copied to clipboard.":"Copy failed. Select and copy manually.");}}
- function handoff(message,target){
-  const packet=target==="hermes"
-   ?"HERMES IMPLEMENTATION TASK\n\nSource: "+names[message.workspace]+"\n\nContext / plan:\n"+message.text+"\n\nInstructions:\n1. Inspect the relevant files and current system state before changing anything.\n2. Identify assumptions, risks, and required approvals.\n3. Propose a minimal implementation plan first.\n4. Do not expose secrets or modify unrelated files.\n5. Report exact files changed and verification results."
-   :"CLAUDE INFRASTRUCTURE PLANNING REQUEST\n\nSource: "+names[message.workspace]+"\n\nConversation / requirements:\n"+message.text+"\n\nPlease produce an implementation-ready infrastructure plan. Distinguish verified facts from assumptions, prefer free options, identify security and integration blockers, and give Hermes a bounded implementation task with verification steps. Do not claim access to my laptop or other AI sessions.";
-  const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),source:message.workspace,target:target,text:packet,time:new Date().toISOString(),status:"Prepared; not delivered"};
-  state.queue.unshift(item);persist();renderQueue();copyText(packet);
-  if(target==="claude"){openExternal(urls.claude);toast("Claude packet copied. Paste it into Claude; it was not sent automatically.");}
-  else {toast("Hermes task packet copied. Deliver it using your configured Hermes channel; no bridge is connected.");}
- }
- function openExternal(url){if(!url)return;if(tg&&tg.openLink)tg.openLink(url);else window.open(url,"_blank","noopener");}
- async function shareText(text){if(navigator.share){try{await navigator.share({title:"AI Handoff Desk message",text:text});return;}catch(e){if(e&&e.name==="AbortError")return;}}await copyText(text);toast("Share unavailable here. Text copied instead.");}
- function renderQueue(){
-  const el=$("workflowList");if(!state.queue.length){el.innerHTML='<div class="empty"><strong>No handoffs prepared</strong>Use a message’s “Send to Claude” or “Send to Hermes” action to create a handoff packet.</div>';return;}
-  el.innerHTML=state.queue.map(q=>'<div class="workflowcard"><div class="sectionhead"><strong>'+esc(names[q.source]||q.source)+' → '+esc(names[q.target]||q.target)+'</strong><span class="pill">'+esc(q.status)+'</span></div><div class="quiet">'+esc(new Date(q.time).toLocaleString())+'</div><div class="actions"><button class="action" data-queue="copy" data-id="'+q.id+'">Copy packet</button><button class="action" data-queue="share" data-id="'+q.id+'">Share packet</button><button class="action" data-queue="open" data-id="'+q.id+'">Open '+esc(names[q.target])+'</button></div></div>').join("");
- }
- document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
- const clipboardText=$("clipboardText");
- let clipboardReadPending=false;
- if(tg&&typeof tg.onEvent==="function"){tg.onEvent("clipboardTextReceived",event=>{clipboardReadPending=false;if(event&&typeof event.data==="string"&&event.data.trim()){clipboardText.value=event.data;toast("Clipboard text loaded.");}else{toast("Telegram did not grant clipboard access. Paste manually.");}});}
- async function readClipboard(){try{if(tg&&typeof tg.readTextFromClipboard==="function"){clipboardReadPending=true;tg.readTextFromClipboard();return;}if(!navigator.clipboard||!navigator.clipboard.readText)throw new Error("Clipboard read unavailable");const text=await navigator.clipboard.readText();if(!text.trim()){toast("Clipboard is empty.");return;}clipboardText.value=text;toast("Clipboard text loaded.");}catch(e){clipboardReadPending=false;toast("Clipboard access blocked. Paste into the box manually.");}}
- async function copyClipboard(){const text=clipboardText.value.trim();if(!text){toast("Paste a message first.");return false;}try{await navigator.clipboard.writeText(text);toast("Message copied.");return true;}catch(e){const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();if(!ok)toast("Copy blocked. Select and copy manually.");else toast("Message copied.");return !!ok;}}
- $("readClipboard").addEventListener("click",readClipboard);
- $("copyClipboard").addEventListener("click",copyClipboard);
- function copyAndOpen(url){if(!clipboardText.value.trim()){toast("Paste a message first.");return;}copyClipboard();openExternal(url);}
- $("copyOpenChatGPT").addEventListener("click",()=>copyAndOpen(urls.chatgpt));
- $("copyOpenClaude").addEventListener("click",()=>copyAndOpen(urls.claude));
- $("sendBotData").addEventListener("click",()=>{const text=clipboardText.value.trim();if(!text){toast("Paste a message first.");return;}if(tg&&typeof tg.sendData==="function"){tg.sendData(JSON.stringify({type:"clipboard_handoff",text:text,created_at:new Date().toISOString()}));toast("Submitted to the bot.");}else{toast("Open this Mini App from a Telegram bot keyboard button to send data to the bot.");}});
- $("addMessage").addEventListener("click",()=>{if(addMessage($("draft").value,active,"You"))$("draft").value="";});
- $("draft").addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter")$("addMessage").click();});
- $("shareDraft").addEventListener("click",()=>{const t=$("draft").value.trim();if(!t){toast("Write a draft first.");return;}shareText(t);});
- $("prepareHandoff").addEventListener("click",()=>{const t=$("draft").value.trim();if(!t){toast("Write or paste a message first.");return;}const m=addMessage(t,active,"You");if(m){$("draft").value="";handoff(m,active==="chatgpt"?"claude":"hermes");}});
- $("messages").addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(!b)return;const m=state.messages.find(x=>x.id===b.dataset.id);if(!m)return;if(b.dataset.action==="copy")copyText(m.text);if(b.dataset.action==="share")shareText(m.text);if(b.dataset.action==="handoff")handoff(m,b.dataset.target);});
- $("workflowList").addEventListener("click",e=>{const b=e.target.closest("button[data-queue]");if(!b)return;const q=state.queue.find(x=>x.id===b.dataset.id);if(!q)return;if(b.dataset.queue==="copy")copyText(q.text);if(b.dataset.queue==="share")shareText(q.text);if(b.dataset.queue==="open"){if(q.target==="hermes"){copyText(q.text);toast("Hermes packet copied. Open your configured Hermes app or Telegram manually.");}else openExternal(urls[q.target]);}});
- $("clearWorkflow").addEventListener("click",()=>{state.queue=[];persist();renderQueue();toast("Handoff queue cleared.");});
- $("exportData").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="ai-handoff-desk-export.json";a.click();URL.revokeObjectURL(url);});
- document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openExternal(b.dataset.open)));
- // Settings is available from the workflow header with a long press on the title, keeping the primary tabs focused.
- $("connectionStatus").addEventListener("click",()=>setTab("settings"));
- render();renderQueue();
-})();
+var tg = window.Telegram && window.Telegram.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  try { tg.setHeaderColor("#1f2c3a"); tg.setBackgroundColor("#17212b"); } catch (e) {}
+}
+
+function openExternal(url) {
+  if (tg && tg.openLink) { tg.openLink(url); } else { window.open(url, "_blank"); }
+}
+function openTelegram(url) {
+  if (tg && tg.openTelegramLink) { tg.openTelegramLink(url); } else { window.open(url, "_blank"); }
+}
+document.querySelectorAll(".tile[data-url]").forEach(function (b) {
+  b.addEventListener("click", function () { openExternal(b.getAttribute("data-url")); });
+});
+
+var $ = function (id) { return document.getElementById(id); };
+var msg = $("msg"), statusEl = $("status"), logEl = $("log"), userEl = $("hermesUser");
+var store = {
+  get: function (k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
+  set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+
+msg.value = store.get("handoff.msg");
+userEl.value = store.get("handoff.hermesUser");
+msg.addEventListener("input", function () { store.set("handoff.msg", msg.value); });
+userEl.addEventListener("input", function () { store.set("handoff.hermesUser", userEl.value.trim()); });
+
+function say(t) { statusEl.textContent = t; }
+function text() { return msg.value.trim(); }
+
+function copy(t) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(t).then(function () { return true; }, function () { return legacyCopy(t); });
+  }
+  return Promise.resolve(legacyCopy(t));
+}
+function legacyCopy(t) {
+  try {
+    var ta = document.createElement("textarea");
+    ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    var ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch (e) { return false; }
+}
+
+function addLog(dest) {
+  var items = [];
+  try { items = JSON.parse(store.get("handoff.log") || "[]"); } catch (e) {}
+  items.unshift({ dest: dest, at: new Date().toLocaleString(), len: text().length });
+  items = items.slice(0, 10);
+  store.set("handoff.log", JSON.stringify(items));
+  renderLog();
+}
+function renderLog() {
+  var items = [];
+  try { items = JSON.parse(store.get("handoff.log") || "[]"); } catch (e) {}
+  logEl.innerHTML = "";
+  items.forEach(function (i) {
+    var li = document.createElement("li");
+    li.textContent = i.at + " → " + i.dest + " (" + i.len + " chars)";
+    logEl.appendChild(li);
+  });
+}
+renderLog();
+
+function needText() {
+  if (!text()) { say("Nothing to send yet. Paste a message first."); return false; }
+  return true;
+}
+
+$("paste").addEventListener("click", function () {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(function (t) {
+      msg.value = t; store.set("handoff.msg", t); say("Pasted from clipboard.");
+    }, function () { say("Clipboard read was blocked. Long-press the box and choose Paste."); });
+  } else { say("Clipboard read is not available here. Long-press the box and choose Paste."); }
+});
+$("clear").addEventListener("click", function () { msg.value = ""; store.set("handoff.msg", ""); say("Cleared."); });
+
+function viaCopy(dest, base) {
+  if (!needText()) return;
+  var t = text();
+  copy(t).then(function (ok) {
+    var url = base + (t.length <= 4000 ? "?q=" + encodeURIComponent(t) : "");
+    addLog(dest);
+    say((ok ? "Copied. " : "Copy failed, paste manually. ") + "Opening " + dest + (t.length > 4000 ? " (too long to prefill; paste it)." : "."));
+    openExternal(url);
+  });
+}
+$("toClaude").addEventListener("click", function () { viaCopy("Claude", "https://claude.ai/new"); });
+$("toGpt").addEventListener("click", function () { viaCopy("ChatGPT", "https://chatgpt.com/"); });
+
+$("toHermes").addEventListener("click", function () {
+  if (!needText()) return;
+  var t = text();
+  if (t.length > 3500) { say("Too long for a Telegram share link (" + t.length + " chars, limit about 3500). Shorten it or send in parts."); return; }
+  copy(t);
+  addLog("Hermes");
+  say("Telegram will ask which chat. Pick your Hermes bot and tap send.");
+  openTelegram("https://t.me/share/url?url=&text=" + encodeURIComponent(t));
+});
+
+function goHermes() {
+  var u = userEl.value.trim().replace(/^@/, "").replace(/^https?:\/\/t\.me\//, "");
+  if (!/^[A-Za-z0-9_]{4,32}$/.test(u)) { say("Enter the Hermes bot username first (letters, digits, underscore)."); return; }
+  openTelegram("https://t.me/" + u);
+}
+$("openHermes").addEventListener("click", goHermes);
+$("hermesTile").addEventListener("click", function () {
+  if (!userEl.value.trim()) { userEl.scrollIntoView({ behavior: "smooth", block: "center" }); userEl.focus(); say("Type your Hermes bot username once, then tap the Hermes tile again."); return; }
+  goHermes();
+});
 </script>
 </body>
 </html>
