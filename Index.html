@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Launcher</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+    background: #17212b; color: #f5f7fa;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  h1 { margin: 0 4px 20px; font-size: 24px; font-weight: 650; }
+  .tile {
+    display: flex; align-items: center; gap: 16px;
+    width: 100%; min-height: 96px; margin: 0 0 14px; padding: 20px 18px;
+    background: #243445; color: inherit; border: 0; border-radius: 18px;
+    text-align: left; font: inherit; cursor: pointer;
+  }
+  .tile:active { opacity: .75; }
+  .tile:focus-visible { outline: 3px solid #6ab3f3; outline-offset: 2px; }
+  .name { display: block; font-size: 21px; font-weight: 650; }
+  .note { display: block; margin-top: 2px; font-size: 15px; color: #9fb0c0; }
+</style>
+</head>
+<body>
+  <h1>My Launcher</h1>
+
+  <button class="tile" type="button" data-url="https://claude.ai/new">
+    <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect width="52" height="52" rx="14" fill="#c4703f"/><g stroke="#fff" stroke-width="3.5" stroke-linecap="round"><line x1="26" y1="12" x2="26" y2="40"/><line x1="12" y1="26" x2="40" y2="26"/><line x1="16" y1="16" x2="36" y2="36"/><line x1="36" y1="16" x2="16" y2="36"/></g></svg>
+    <span><span class="name">Claude</span><span class="note">Start a new chat</span></span>
+  </button>
+
+  <button class="tile" type="button" data-url="https://chatgpt.com/">
+    <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect width="52" height="52" rx="14" fill="#10a37f"/><polygon points="26,11 39,18.5 39,33.5 26,41 13,33.5 13,18.5" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/><circle cx="26" cy="26" r="4" fill="#fff"/></svg>
+    <span><span class="name">ChatGPT</span><span class="note">Open ChatGPT</span></span>
+  </button>
+
+  <button class="tile" type="button" data-url="https://www.binance.com/en/my/wallet/account/payment/cryptobox">
+    <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect width="52" height="52" rx="14" fill="#f0b90b"/><g fill="#1b1b1b"><polygon points="26,10 32,16 26,22 20,16"/><polygon points="26,30 32,36 26,42 20,36"/><polygon points="10,26 16,20 22,26 16,32"/><polygon points="30,26 36,20 42,26 36,32"/></g></svg>
+    <span><span class="name">Binance Red Packet</span><span class="note">Paste a code and claim</span></span>
+  </button>
+
+<script>
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    try { tg.setHeaderColor("#1f2c3a"); tg.setBackgroundColor("#17212b"); } catch (e) {}
+  }
+  document.querySelectorAll(".tile").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var url = b.getAttribute("data-url");
+      if (tg && tg.openLink) { tg.openLink(url); } else { window.open(url, "_blank"); }
+    });
+  });
+</script>
+</body>
+</html>
