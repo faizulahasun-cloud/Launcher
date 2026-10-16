@@ -46,7 +46,8 @@ main{padding:16px;flex:1}.view{display:none}.view.active{display:block}.sectionh
 <section class="view" id="settingsView">
  <div class="sectionhead"><h2>Connections & privacy</h2></div>
  <div class="workflowcard">
-  <div class="settingsrow"><div><strong>ChatGPT (Chrome)</strong><p>No browser-tab reading or session access configured.</p></div><span class="pill">Not connected</span></div>
+  <div class="settingsrow"><div><strong>ChatGPT website</strong><p>Open the official ChatGPT webpage to sign in, create an account, or use an existing browser session. Login is handled by OpenAI, not stored in this app.</p></div><div class="smallrow"><button class="linkbtn" data-open="https://chatgpt.com/auth/login">Log in</button><button class="linkbtn" data-open="https://chatgpt.com/">Sign up / Open</button></div></div>
+  <div class="settingsrow"><div><strong>ChatGPT (browser session)</strong><p>This app cannot read your ChatGPT webpage session or access its conversations automatically.</p></div><span class="pill">Not connected</span></div>
   <div class="settingsrow"><div><strong>Claude</strong><p>Handoff opens Claude; you paste the prepared message.</p></div><button class="linkbtn" data-open="https://claude.ai/new">Open Claude</button></div>
   <div class="settingsrow"><div><strong>Hermes Agent</strong><p>Requires a reachable, authenticated Hermes bridge or Telegram bot integration.</p></div><span class="pill">Not connected</span></div>
   <div class="settingsrow"><div><strong>Local message history</strong><p>Saved in this browser’s local storage. Do not paste secrets.</p></div><button class="linkbtn" id="exportData">Export JSON</button></div>
